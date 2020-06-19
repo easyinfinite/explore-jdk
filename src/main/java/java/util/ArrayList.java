@@ -455,8 +455,6 @@ public class ArrayList<E> extends AbstractList<E>
      * @return <tt>true</tt> (as specified by {@link Collection#add})
      */
     public boolean add(E e) {
-        System.out.println("xxxx");
-        System.out.println("yyy");
         ensureCapacityInternal(size + 1);  // Increments modCount!!
         elementData[size++] = e;
         return true;

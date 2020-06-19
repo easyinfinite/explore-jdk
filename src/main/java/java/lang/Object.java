@@ -34,8 +34,25 @@ package java.lang;
  * @see     java.lang.Class
  * @since   JDK1.0
  */
+//所有类的父类
 public class Object {
 
+
+//    static JNINativeMethod methods[] = {
+//        {"hashCode",    "()I",                    (void *)&JVM_IHashCode},
+//        {"wait",        "(J)V",                   (void *)&JVM_MonitorWait},
+//        {"notify",      "()V",                    (void *)&JVM_MonitorNotify},
+//        {"notifyAll",   "()V",                    (void *)&JVM_MonitorNotifyAll},
+//        {"clone",       "()Ljava/lang/Object;",   (void *)&JVM_Clone},
+//        };
+//
+//        JNIEXPORT void JNICALL
+//        Java_java_lang_Object_registerNatives(JNIEnv *env, jclass cls)
+//        {
+//        // 注册本地方法
+//        (*env)->RegisterNatives(env, cls,
+//        methods, sizeof(methods)/sizeof(methods[0]));
+//        }
     private static native void registerNatives();
     static {
         registerNatives();
@@ -60,6 +77,7 @@ public class Object {
      *         class of this object.
      * @jls 15.8.2 Class Literals
      */
+    //getClass方法用于获取对象的运行时类,在反射的时候用的比较多。
     public final native Class<?> getClass();
 
     /**
@@ -97,6 +115,7 @@ public class Object {
      * @see     java.lang.Object#equals(java.lang.Object)
      * @see     java.lang.System#identityHashCode
      */
+    //hashCode方法用户获取对象的hash值。 在强烈依赖hashCode的地方是必须的。比如HashMap中对key进行hash计算，其实是利用key的hashCode。
     public native int hashCode();
 
     /**
@@ -145,6 +164,7 @@ public class Object {
      * @see     #hashCode()
      * @see     java.util.HashMap
      */
+    //判断对象是否相等.
     public boolean equals(Object obj) {
         return (this == obj);
     }
@@ -209,6 +229,13 @@ public class Object {
      *               be cloned.
      * @see java.lang.Cloneable
      */
+    //克隆一个Object对象,使用时需实现Cloneable接口
+    //1、 基本类型
+    //    如果变量是基本类型，则拷贝其值，比如int、float等。
+    //2、 对象
+    //    如果变量是一个实例对象，则拷贝其地址引用，也就是说新对象和原来对象是共用实例变量的。
+    //3、 String字符串
+    //    若变量为String字符串，则拷贝其地址引用。但是在修改时，它会从字符串池中重新生成一个新的字符串，原有的对象保持不变。
     protected native Object clone() throws CloneNotSupportedException;
 
     /**
@@ -232,6 +259,7 @@ public class Object {
      *
      * @return  a string representation of the object.
      */
+    //对象转字符串.输出类名以及对象的hashCode值
     public String toString() {
         return getClass().getName() + "@" + Integer.toHexString(hashCode());
     }
