@@ -25,12 +25,13 @@
 
 package java.lang.invoke;
 
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import sun.misc.Unsafe;
 
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+
 /**
- * This class consists exclusively of static names internal to the
+ * this class consists exclusively of static names internal to the
  * method handle implementation.
  * Usage:  {@code import static java.lang.invoke.MethodHandleStatics.*}
  * @author John Rose, JSR 292 EG

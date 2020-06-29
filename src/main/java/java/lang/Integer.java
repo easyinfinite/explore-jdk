@@ -54,12 +54,14 @@ public final class Integer extends Number implements Comparable<Integer> {
      * A constant holding the minimum value an {@code int} can
      * have, -2<sup>31</sup>.
      */
+    //min_value ->-2147483647 -2的31次方
     @Native public static final int   MIN_VALUE = 0x80000000;
 
     /**
      * A constant holding the maximum value an {@code int} can
      * have, 2<sup>31</sup>-1.
      */
+    //max_value ->2147483647 2的31次方
     @Native public static final int   MAX_VALUE = 0x7fffffff;
 
     /**
@@ -68,12 +70,14 @@ public final class Integer extends Number implements Comparable<Integer> {
      *
      * @since   JDK1.1
      */
+    //声明Integer类的原始类型为int
     @SuppressWarnings("unchecked")
     public static final Class<Integer>  TYPE = (Class<Integer>) Class.getPrimitiveClass("int");
 
     /**
      * All possible chars for representing a number as a String
      */
+    //数字字母表,表示integer所有可能的数字,因为是多进制,所以含有字母
     final static char[] digits = {
         '0' , '1' , '2' , '3' , '4' , '5' ,
         '6' , '7' , '8' , '9' , 'a' , 'b' ,
@@ -127,11 +131,14 @@ public final class Integer extends Number implements Comparable<Integer> {
      * @see     java.lang.Character#MAX_RADIX
      * @see     java.lang.Character#MIN_RADIX
      */
+    //转换为radix进制的字符串
     public static String toString(int i, int radix) {
+        //如果输入的radix进制不是有效进制,默认十进制
         if (radix < Character.MIN_RADIX || radix > Character.MAX_RADIX)
             radix = 10;
 
         /* Use the faster version */
+        //如果是十进制,直接调用一个参数的toString
         if (radix == 10) {
             return toString(i);
         }
@@ -339,6 +346,7 @@ public final class Integer extends Number implements Comparable<Integer> {
         return charPos;
     }
 
+    //方便取出0-99的数个位和十位的值,如39 DigitTens[39]=3,DigitOnes[39]=9
     final static char [] DigitTens = {
         '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
         '1', '1', '1', '1', '1', '1', '1', '1', '1', '1',
@@ -351,7 +359,6 @@ public final class Integer extends Number implements Comparable<Integer> {
         '8', '8', '8', '8', '8', '8', '8', '8', '8', '8',
         '9', '9', '9', '9', '9', '9', '9', '9', '9', '9',
         } ;
-
     final static char [] DigitOnes = {
         '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
         '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
@@ -395,8 +402,10 @@ public final class Integer extends Number implements Comparable<Integer> {
      * @return  a string representation of the argument in base&nbsp;10.
      */
     public static String toString(int i) {
+        //特殊处理,因为int的最小值会溢出
         if (i == Integer.MIN_VALUE)
             return "-2147483648";
+        //获取这个数字的位数,如果是负数,取反去掉符号,然后位数加一
         int size = (i < 0) ? stringSize(-i) + 1 : stringSize(i);
         char[] buf = new char[size];
         getChars(i, size, buf);
@@ -430,6 +439,7 @@ public final class Integer extends Number implements Comparable<Integer> {
      *
      * Will fail if i == Integer.MIN_VALUE
      */
+    //把数值打散为字符数组
     static void getChars(int i, int index, char[] buf) {
         int q, r;
         int charPos = index;
@@ -440,6 +450,7 @@ public final class Integer extends Number implements Comparable<Integer> {
             i = -i;
         }
 
+        //处理高位部分(大于五位数65536)
         // Generate two digits per iteration
         while (i >= 65536) {
             q = i / 100;
@@ -450,24 +461,28 @@ public final class Integer extends Number implements Comparable<Integer> {
             buf [--charPos] = DigitTens[r];
         }
 
+        //处理低值部分
         // Fall thru to fast mode for smaller numbers
         // assert(i <= 65536, i);
         for (;;) {
-            q = (i * 52429) >>> (16+3);
+            q = (i * 52429) >>> (16+3); //约等于i/10
             r = i - ((q << 3) + (q << 1));  // r = i-(q*10) ...
             buf [--charPos] = digits [r];
             i = q;
             if (i == 0) break;
         }
         if (sign != 0) {
+            //补齐减号
             buf [--charPos] = sign;
         }
     }
 
+    //方便取出int型数字对应字符串的长度
     final static int [] sizeTable = { 9, 99, 999, 9999, 99999, 999999, 9999999,
                                       99999999, 999999999, Integer.MAX_VALUE };
 
     // Requires positive x
+    // 快速定位integer长度
     static int stringSize(int x) {
         for (int i=0; ; i++)
             if (x <= sizeTable[i])
@@ -529,6 +544,7 @@ public final class Integer extends Number implements Comparable<Integer> {
      * @exception  NumberFormatException if the {@code String}
      *             does not contain a parsable {@code int}.
      */
+    //转换为int的构造方法,radix表示多少进制
     public static int parseInt(String s, int radix)
                 throws NumberFormatException
     {
@@ -537,16 +553,17 @@ public final class Integer extends Number implements Comparable<Integer> {
          * before IntegerCache is initialized. Care must be taken to not use
          * the valueOf method.
          */
-
+        //为空直接抛出数值转换异常
         if (s == null) {
             throw new NumberFormatException("null");
         }
 
+        //判断进制在2-36之间,保证是合理的进制值
         if (radix < Character.MIN_RADIX) {
             throw new NumberFormatException("radix " + radix +
                                             " less than Character.MIN_RADIX");
         }
-
+        //以上
         if (radix > Character.MAX_RADIX) {
             throw new NumberFormatException("radix " + radix +
                                             " greater than Character.MAX_RADIX");
@@ -611,6 +628,7 @@ public final class Integer extends Number implements Comparable<Integer> {
      * @exception  NumberFormatException  if the string does not contain a
      *               parsable integer.
      */
+    //默认转换为int类型,转换为10进制
     public static int parseInt(String s) throws NumberFormatException {
         return parseInt(s,10);
     }
@@ -776,7 +794,8 @@ public final class Integer extends Number implements Comparable<Integer> {
      * may be set and saved in the private system properties in the
      * sun.misc.VM class.
      */
-
+    //integer的缓存类,缓存-128->127的数据,猜测场景订单的交易数量,大多数都是100以内的价格,
+    // 用了IntegerCache，就减少了new的时间也就提升了效率。同时JDK还提供cache中high值得可配置,方便对JVM进行优化
     private static class IntegerCache {
         static final int low = -128;
         static final int high;
@@ -784,7 +803,10 @@ public final class Integer extends Number implements Comparable<Integer> {
 
         static {
             // high value may be configured by property
+            //初始化缓存的最高值 -218 +127
             int h = 127;
+            //缓存的最高值可以通过配置灵活变动
+            //-Djava.lang.Integer.IntegerCache.high=xxx
             String integerCacheHighPropValue =
                 sun.misc.VM.getSavedProperty("java.lang.Integer.IntegerCache.high");
             if (integerCacheHighPropValue != null) {
@@ -799,6 +821,7 @@ public final class Integer extends Number implements Comparable<Integer> {
             }
             high = h;
 
+            //初始化cache的长度为最大的high-low+1的值,默认为256
             cache = new Integer[(high - low) + 1];
             int j = low;
             for(int k = 0; k < cache.length; k++)
@@ -808,6 +831,7 @@ public final class Integer extends Number implements Comparable<Integer> {
             assert IntegerCache.high >= 127;
         }
 
+        //使用private使内部类无法实例化
         private IntegerCache() {}
     }
 
@@ -826,6 +850,7 @@ public final class Integer extends Number implements Comparable<Integer> {
      * @return an {@code Integer} instance representing {@code i}.
      * @since  1.5
      */
+    //当取值为-127->128时,会取缓存里的数据
     public static Integer valueOf(int i) {
         if (i >= IntegerCache.low && i <= IntegerCache.high)
             return IntegerCache.cache[i + (-IntegerCache.low)];
@@ -837,6 +862,7 @@ public final class Integer extends Number implements Comparable<Integer> {
      *
      * @serial
      */
+    //成员变量
     private final int value;
 
     /**
@@ -846,6 +872,7 @@ public final class Integer extends Number implements Comparable<Integer> {
      * @param   value   the value to be represented by the
      *                  {@code Integer} object.
      */
+    //构造方法,初始化value为传入的值
     public Integer(int value) {
         this.value = value;
     }
@@ -863,7 +890,9 @@ public final class Integer extends Number implements Comparable<Integer> {
      *               contain a parsable integer.
      * @see        java.lang.Integer#parseInt(java.lang.String, int)
      */
+    //构造方法,传入一个字符串类型的值,失败会抛出数值转换异常
     public Integer(String s) throws NumberFormatException {
+        //值先转成int
         this.value = parseInt(s, 10);
     }
 
@@ -1152,12 +1181,15 @@ public final class Integer extends Number implements Comparable<Integer> {
      *            contain a parsable integer.
      * @see java.lang.Integer#parseInt(java.lang.String, int)
      */
+    //转换字符为相对应的进制数字,十进制，十六进制和八进制数
     public static Integer decode(String nm) throws NumberFormatException {
+        //默认为十进制
         int radix = 10;
         int index = 0;
         boolean negative = false;
         Integer result;
 
+        //不可为空
         if (nm.length() == 0)
             throw new NumberFormatException("Zero length string");
         char firstChar = nm.charAt(0);
@@ -1169,6 +1201,7 @@ public final class Integer extends Number implements Comparable<Integer> {
             index++;
 
         // Handle radix specifier, if present
+        ///如果以0x 0X
         if (nm.startsWith("0x", index) || nm.startsWith("0X", index)) {
             index += 2;
             radix = 16;
@@ -1320,6 +1353,7 @@ public final class Integer extends Number implements Comparable<Integer> {
      *
      * @since 1.5
      */
+    //用来表示二进制补码形式的int值的比特数，值为32，静态变量且不可变。
     @Native public static final int SIZE = 32;
 
     /**
@@ -1328,6 +1362,7 @@ public final class Integer extends Number implements Comparable<Integer> {
      *
      * @since 1.8
      */
+    //用来表示二进制补码形式的int值的字节数，值为SIZE除于Byte.SIZE，结果为4
     public static final int BYTES = SIZE / Byte.SIZE;
 
     /**
