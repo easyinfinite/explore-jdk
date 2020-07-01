@@ -28,6 +28,14 @@ public class TestInteger {
         log.error("integer nullInt=new Integer(\"ssssss\")");
         log.info("Integer decode sixteen Integer.decode(\"0xff\")->{} Integer.decode(\"#ff\")->{}", Integer.decode("0xff"), Integer.decode("#ff"));
         log.info("Integer decode eight Integer.decode(\"-071\")->{}", Integer.decode("-071"));
+        log.info("Integer bitcount -> {}", Integer.bitCount(111));
+
+        //不借助变量实现元素互换
+        int aa = 520, bb = 111;
+        aa ^= bb ^ (bb = aa);
+        log.info("aa ->{},bb ->{}", aa, bb);
+
+        log.info("reverse ->{}",Integer.reverse(1426063360));
     }
 
     //方便取出int型数字对应字符串的长度

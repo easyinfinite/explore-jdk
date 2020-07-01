@@ -1476,7 +1476,14 @@ public final class Integer extends Number implements Comparable<Integer> {
      *     representation of the specified {@code int} value.
      * @since 1.5
      */
+    //返回二进制下该数字的1的个数
     public static int bitCount(int i) {
+        //列出不同的三种实现bitCountJdk,bitCountNormal,bitCountQuite
+        //https://segmentfault.com/a/1190000015763941 解释了这三种算法的原理过程
+        return bitCountJdk(i);
+    }
+
+    static int bitCountJdk(int i){
         // HD, Figure 5-2
         i = i - ((i >>> 1) & 0x55555555);
         i = (i & 0x33333333) + ((i >>> 2) & 0x33333333);
@@ -1484,6 +1491,28 @@ public final class Integer extends Number implements Comparable<Integer> {
         i = i + (i >>> 8);
         i = i + (i >>> 16);
         return i & 0x3f;
+    }
+
+    static int bitCountNormal(int i){
+        //实现方式普通实现,时间复杂度为O(n)，n为总bit数
+        int count = 0;
+        do {
+            if (( i& 1) == 1) {
+                count++;
+            }
+           i >>=1;
+        } while (i > 0);
+        return count;
+    }
+
+    static int bitCountQuite(int i){
+        //优化实现,
+        int count = 0;
+        while (i > 0) {
+            i = i & (i - 1);
+            count++;
+        }
+        return count;
     }
 
     /**
@@ -1544,6 +1573,7 @@ public final class Integer extends Number implements Comparable<Integer> {
      *     specified {@code int} value.
      * @since 1.5
      */
+    //数字反转
     public static int reverse(int i) {
         // HD, Figure 7-1
         i = (i & 0x55555555) << 1 | (i >>> 1) & 0x55555555;
