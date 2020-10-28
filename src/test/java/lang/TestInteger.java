@@ -29,13 +29,17 @@ public class TestInteger {
         log.info("Integer decode sixteen Integer.decode(\"0xff\")->{} Integer.decode(\"#ff\")->{}", Integer.decode("0xff"), Integer.decode("#ff"));
         log.info("Integer decode eight Integer.decode(\"-071\")->{}", Integer.decode("-071"));
         log.info("Integer bitcount -> {}", Integer.bitCount(111));
-
         //不借助变量实现元素互换
         int aa = 520, bb = 111;
         aa ^= bb ^ (bb = aa);
         log.info("aa ->{},bb ->{}", aa, bb);
-
+        //数字反转
         log.info("reverse ->{}",Integer.reverse(1426063360));
+        //无符号比较
+        log.info("compareUnsigned ->{}",Integer.compareUnsigned(1,-1));
+        log.info("compare ->{}",Integer.compare(1,-1));
+        //转为二进制字符串
+        log.info("toBinaryString ->{}",Integer.toBinaryString(111));
     }
 
     //方便取出int型数字对应字符串的长度
