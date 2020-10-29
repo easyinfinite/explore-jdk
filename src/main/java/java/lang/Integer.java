@@ -1657,7 +1657,7 @@ public final class Integer extends Number implements Comparable<Integer> {
      * @see java.util.function.BinaryOperator
      * @since 1.8
      */
-    //两数之和
+    //两数之和(此静态方法与Math.sum相同,在这里实现是为了方便流api Integer::sum )
     public static int sum(int a, int b) {
         return a + b;
     }
@@ -1672,7 +1672,7 @@ public final class Integer extends Number implements Comparable<Integer> {
      * @see java.util.function.BinaryOperator
      * @since 1.8
      */
-    //返回ab的最大值
+    //返回ab的最大值(此静态方法与Math.max相同)
     public static int max(int a, int b) {
         return Math.max(a, b);
     }
@@ -1687,11 +1687,12 @@ public final class Integer extends Number implements Comparable<Integer> {
      * @see java.util.function.BinaryOperator
      * @since 1.8
      */
-    //返回ab的最小值
+    //返回ab的最小值(此静态方法与Math.min相同)
     public static int min(int a, int b) {
         return Math.min(a, b);
     }
 
     /** use serialVersionUID from JDK 1.0.2 for interoperability */
+    //序列化序号
     @Native private static final long serialVersionUID = 1360826667806852920L;
 }
