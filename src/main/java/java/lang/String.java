@@ -108,15 +108,19 @@ import java.util.regex.PatternSyntaxException;
  * @since   JDK1.0
  */
 
+//String类是由final修饰的，表明String类不能被继承，并且String类中的成员方法都默认是final方法
 public final class String
     implements java.io.Serializable, Comparable<String>, CharSequence {
     /** The value is used for character storage. */
+    //成员变量:字符数组
     private final char value[];
 
     /** Cache the hash code for the string */
+    //hash值
     private int hash; // Default to 0
 
     /** use serialVersionUID from JDK 1.0.2 for interoperability */
+    //序列化序号
     private static final long serialVersionUID = -6849794470754667710L;
 
     /**
@@ -126,14 +130,18 @@ public final class String
      * <a href="{@docRoot}/../platform/serialization/spec/output.html">
      * Object Serialization Specification, Section 6.2, "Stream Elements"</a>
      */
+    //serialPersistentFields属性用于指定哪些字段需要被默认序列化,这里的new ObjectStreamField[0]与{}同义,表示没有变量被序列化
     private static final ObjectStreamField[] serialPersistentFields =
         new ObjectStreamField[0];
+
+
 
     /**
      * Initializes a newly created {@code String} object so that it represents
      * an empty character sequence.  Note that use of this constructor is
      * unnecessary since Strings are immutable.
      */
+    //无参构造方法,把成员变量value赋值为空字符串的value值
     public String() {
         this.value = "".value;
     }
@@ -148,6 +156,7 @@ public final class String
      * @param  original
      *         A {@code String}
      */
+    //构造方法,传入String类型的original,拷贝original的value和hash
     public String(String original) {
         this.value = original.value;
         this.hash = original.hash;
@@ -162,6 +171,7 @@ public final class String
      * @param  value
      *         The initial value of the string
      */
+    //构造方法,传入字符数字,内部调用 Arrays.copyOf 完成字符数组的拷贝再赋值给成员变量value
     public String(char value[]) {
         this.value = Arrays.copyOf(value, value.length);
     }
@@ -187,23 +197,29 @@ public final class String
      *          If the {@code offset} and {@code count} arguments index
      *          characters outside the bounds of the {@code value} array
      */
+    //构造方法,从char数组中的offset位置开始，截取count个字符，拷贝到value。
     public String(char value[], int offset, int count) {
+        //验证非法偏移量
         if (offset < 0) {
             throw new StringIndexOutOfBoundsException(offset);
         }
+        //验证非法count值
         if (count <= 0) {
             if (count < 0) {
                 throw new StringIndexOutOfBoundsException(count);
             }
+            //当截取数为0,偏移量小于传入的value字符数组的长度,返回空字符串
             if (offset <= value.length) {
                 this.value = "".value;
                 return;
             }
         }
         // Note: offset or count might be near -1>>>1.
+        // 偏移量大于传入字符数组减去截取数,返回越界
         if (offset > value.length - count) {
             throw new StringIndexOutOfBoundsException(offset + count);
         }
+        //正常情况下返回截取后的字符串对象,底层也是调用 System.arraycopy c的数组拷贝方法
         this.value = Arrays.copyOfRange(value, offset, offset+count);
     }
 
@@ -376,6 +392,7 @@ public final class String
      * and requested offset & length values used by the String(byte[],..)
      * constructors.
      */
+    //检测边界
     private static void checkBounds(byte[] bytes, int offset, int length) {
         if (length < 0)
             throw new StringIndexOutOfBoundsException(length);
@@ -541,8 +558,12 @@ public final class String
      *
      * @since  JDK1.1
      */
+    //构造方法传入bytes数组,偏移量0,截取量为bytes的length长度.
+    //用于只需要截取字节数组部分的情况,如果程序切割好再调用String(byte bytes[])会额外增加内存开销.
     public String(byte bytes[], int offset, int length) {
+        //边界检测,越界抛出 StringIndexOutOfBoundsException 异常
         checkBounds(bytes, offset, length);
+        //赋值给成员变量value
         this.value = StringCoding.decode(bytes, offset, length);
     }
 
@@ -562,6 +583,7 @@ public final class String
      *
      * @since  JDK1.1
      */
+    //构造方法传入字节数组.默认用整个字节数组构造String
     public String(byte bytes[]) {
         this(bytes, 0, bytes.length);
     }
@@ -1150,22 +1172,30 @@ public final class String
      *          value greater than {@code 0} if this string is
      *          lexicographically greater than the string argument.
      */
+    //字符串的比较
     public int compareTo(String anotherString) {
         int len1 = value.length;
         int len2 = anotherString.value.length;
+        //取长度的最小值
         int lim = Math.min(len1, len2);
+        //分别取出各自的char数组
         char v1[] = value;
         char v2[] = anotherString.value;
 
         int k = 0;
         while (k < lim) {
+            //从首位开始取出两个字符串的各个下标的字符对比
             char c1 = v1[k];
             char c2 = v2[k];
+            //出现不同则返回两个字符的差值
             if (c1 != c2) {
                 return c1 - c2;
             }
             k++;
         }
+        //有两种情况会走到这里来
+        //1.各个字符完全相同且字符长度一样,那么返回0,他们是相等的.
+        //2.各个字符完全相同且字符长度不一样,那么返回字符长度差,负数就是anotherString大,反之就是anotherString小.
         return len1 - len2;
     }
 
@@ -1183,11 +1213,14 @@ public final class String
      */
     public static final Comparator<String> CASE_INSENSITIVE_ORDER
                                          = new CaseInsensitiveComparator();
+
+    //内部类 : 字符串比较器
     private static class CaseInsensitiveComparator
             implements Comparator<String>, java.io.Serializable {
         // use serialVersionUID from JDK 1.2.2 for interoperability
         private static final long serialVersionUID = 8575799808933029326L;
 
+        //比较字符串的大小(忽略大小写)
         public int compare(String s1, String s2) {
             int n1 = s1.length();
             int n2 = s2.length();
