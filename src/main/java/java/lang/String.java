@@ -248,27 +248,33 @@ public final class String
      * @throws  IndexOutOfBoundsException
      *          If the {@code offset} and {@code count} arguments index
      *          characters outside the bounds of the {@code codePoints} array
-     *
+     * @See
      * @since  1.5
      */
+    //传入int数组构造String(取每一位int值对应的ASCII码输出 参照ASCII码对照表)
     public String(int[] codePoints, int offset, int count) {
+        //边界检测
         if (offset < 0) {
             throw new StringIndexOutOfBoundsException(offset);
         }
+        //截取值边界检测
         if (count <= 0) {
             if (count < 0) {
                 throw new StringIndexOutOfBoundsException(count);
             }
+            //如果偏移值小于数组长度,截取值为0取空字符
             if (offset <= codePoints.length) {
                 this.value = "".value;
                 return;
             }
         }
         // Note: offset or count might be near -1>>>1.
+        // 边界检测
         if (offset > codePoints.length - count) {
             throw new StringIndexOutOfBoundsException(offset + count);
         }
 
+        //循环取值的边界为偏移量+截取值
         final int end = offset + count;
 
         // Pass 1: Compute precise size of char[]
@@ -597,6 +603,7 @@ public final class String
      * @param  buffer
      *         A {@code StringBuffer}
      */
+    //参数类型为StringBuffer,将StringBuffer值数组拷贝给String的值数组(线程安全)
     public String(StringBuffer buffer) {
         synchronized(buffer) {
             this.value = Arrays.copyOf(buffer.getValue(), buffer.length());
@@ -618,6 +625,7 @@ public final class String
      *
      * @since  1.5
      */
+    //参数类型为StringBuilder,将StringBuilder值数组拷贝给String的值数组
     public String(StringBuilder builder) {
         this.value = Arrays.copyOf(builder.getValue(), builder.length());
     }
@@ -675,7 +683,9 @@ public final class String
      *             argument is negative or not less than the length of this
      *             string.
      */
+    ///弹出对应下标的字符
     public char charAt(int index) {
+        //如果边界小于0或者大于当前当前字符串的长度返回越界异常
         if ((index < 0) || (index >= value.length)) {
             throw new StringIndexOutOfBoundsException(index);
         }
@@ -704,7 +714,9 @@ public final class String
      *             string.
      * @since      1.5
      */
+    //弹出对应下标字符的Unicode码
     public int codePointAt(int index) {
+        //如果边界小于0或者大于当前当前字符串的长度返回越界异常
         if ((index < 0) || (index >= value.length)) {
             throw new StringIndexOutOfBoundsException(index);
         }
@@ -733,6 +745,7 @@ public final class String
      *            of this string.
      * @since     1.5
      */
+    //返回字符串中指定索引之前的字符的Unicode值。第一个字符的索引为1
     public int codePointBefore(int index) {
         int i = index - 1;
         if ((i < 0) || (i >= value.length)) {
