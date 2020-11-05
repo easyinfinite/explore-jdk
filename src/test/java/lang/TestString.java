@@ -16,10 +16,10 @@ public class TestString {
 
     public static void main(String[] args) {
         //测试各种比较方法
-        String ss = "111123";
-        String ss1 = new String("111123");
-        String ss4 = "111123";
-        String ss2 = new String("111123");
+        String ss = "test1";
+        String ss1 = new String("test1");
+        String ss4 = "test1";
+        String ss2 = new String("test1");
         String ss3 = new String("2");
         log.info("string =->{}", ss1 == ss4);
         log.info("string =->{}", ss == ss4);
@@ -28,6 +28,21 @@ public class TestString {
         log.info("string charAt->{}", "123456".charAt(0));
         log.info("string codePointAt(int index)->{}", "anc".codePointAt(1));
         log.info("string codePointAt(int index)->{}", "anc".codePointBefore(2));
+        String str1 = "test2";
+        log.info("string test2 codePointCount(int begin,int end)->{}", str1.codePointCount(0, str1.length()));
+        log.info("string test2 length()->{}", str1.length());
+        String str2 = "\uD875\uDD6B\uD875\uDD6B";
+        log.info("string \\uD875\\uDD6B format->{}", str2);
+        log.info("string \\uD875\\uDD6B codePointCount(int begin,int end)->{}", str2.codePointCount(0, str2.length()));
+        log.info("string \\uD875\\uDD6B length()->{}", str2.length());
+        log.info("string \\uD875\\uDD6B offsetByCodePoints()->{}", str2.offsetByCodePoints(0, 1));
+        log.info("string hash->{}", str2.hashCode());
+        log.info("string concat->{}", str2.concat(ss4));
+        String str3 = "123";
+        String str4 = "test3";
+        StringBuilder stringBuilder = new StringBuilder("");
+        stringBuilder.append("23");
+        log.info("string contains->{}", str3.contains(stringBuilder));
         //测试反序列化参数ObjectStreamField
         testObjectStreamField();
         //测试用字符数组构造String

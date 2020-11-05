@@ -4662,6 +4662,7 @@ class Character implements java.io.Serializable, Comparable<Character> {
      *         {@code false} otherwise.
      * @since  1.5
      */
+    //指定的代码点是否是一个有效的Unicode代码点值。
     public static boolean isValidCodePoint(int codePoint) {
         // Optimized form of:
         //     codePoint >= MIN_CODE_POINT && codePoint <= MAX_CODE_POINT
@@ -4680,6 +4681,8 @@ class Character implements java.io.Serializable, Comparable<Character> {
      *         {@code false} otherwise.
      * @since  1.7
      */
+    // 判定字符是否在BMP的范围内
+    // BMP代表了一个字符范围，在BMP范围内的字符，可以用4位十六进制数表示（16bit），而在BMP以外的字符，需要不止4位十六进制数表示。
     public static boolean isBmpCodePoint(int codePoint) {
         return codePoint >>> 16 == 0;
         // Optimized form of:
@@ -6305,6 +6308,7 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * @see     Character#isLowerCase(char)
      * @see     String#toLowerCase()
      */
+    //转换为小写
     public static char toLowerCase(char ch) {
         return (char)toLowerCase((int)ch);
     }
@@ -6365,6 +6369,7 @@ class Character implements java.io.Serializable, Comparable<Character> {
      * @see     Character#isUpperCase(char)
      * @see     String#toUpperCase()
      */
+    //转换大写
     public static char toUpperCase(char ch) {
         return (char)toUpperCase((int)ch);
     }

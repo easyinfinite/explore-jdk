@@ -25,10 +25,11 @@
 
 package java.io;
 
-import java.lang.reflect.Field;
 import sun.reflect.CallerSensitive;
 import sun.reflect.Reflection;
 import sun.reflect.misc.ReflectUtil;
+
+import java.lang.reflect.Field;
 
 /**
  * A description of a Serializable field from a Serializable class.  An array
@@ -39,6 +40,17 @@ import sun.reflect.misc.ReflectUtil;
  * @see ObjectStreamClass
  * @since 1.2
  */
+//  定义某些字段可被序列化
+//  在类中定义方式可分为四种
+//1.定义为null,序列化后在反序列化,打印出了对象字段数据,字段控制无效
+//  private static final ObjectStreamField[] serialPersistentFields = null;
+//2.定义类不存在字段、序列化抛出java.io.InvalidClassException 异常
+//  private static final ObjectStreamField[] serialPersistentFields = {new ObjectStreamField("xxxx",xxxx.class)};
+//3.声明为{}没有序列化任何字段，序列化、序列化后进行打印，对象字段数据为null
+//  private static final ObjectStreamField[] serialPersistentFields = {};
+//  private static final ObjectStreamField[] serialPersistentFields =  new ObjectStreamField[0]; 该写法存在于String类中,与{}相同效果
+//4.只配置序列化name字段，序列化后反序列化打印，对象输出只有name有值.(参数一:需要序列化的字段名,参数二:该字段的类型)
+//  private static final ObjectStreamField[] serialPersistentFields = {new ObjectStreamField("xxxx",xxxx.class)};
 public class ObjectStreamField
     implements Comparable<Object>
 {
