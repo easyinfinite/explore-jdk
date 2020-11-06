@@ -38,11 +38,21 @@ public class TestString {
         log.info("string \\uD875\\uDD6B offsetByCodePoints()->{}", str2.offsetByCodePoints(0, 1));
         log.info("string hash->{}", str2.hashCode());
         log.info("string concat->{}", str2.concat(ss4));
-        String str3 = "123";
-        String str4 = "test3";
-        StringBuilder stringBuilder = new StringBuilder("");
-        stringBuilder.append("23");
+        String str3 = "12345";
+        Object str4 = "12345";
+        StringBuilder stringBuilder = new StringBuilder("12");
+        stringBuilder.append("335");
         log.info("string contains->{}", str3.contains(stringBuilder));
+        StringBuffer buff= new StringBuffer("12");
+        buff.append("335");
+        log.info("string equals->{}", str3.equals(str4));
+        CharSequence cs="12345";
+        log.info("string equals->{}", str3.contentEquals(cs));
+        String str5="1111";
+        String str6=new String("1111");
+        char aa=22943;
+        System.out.println(aa);
+        log.info("string equalsIgnoreCase->{}", str5.equalsIgnoreCase(str6));
         //测试反序列化参数ObjectStreamField
         testObjectStreamField();
         //测试用字符数组构造String
