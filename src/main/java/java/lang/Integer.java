@@ -551,7 +551,7 @@ public final class Integer extends Number implements Comparable<Integer> {
      * @exception  NumberFormatException if the {@code String}
      *             does not contain a parsable {@code int}.
      */
-    //转换为int的构造方法,radix表示多少进制
+    //转换为int的构造方法,radix表示基数
     public static int parseInt(String s, int radix)
                 throws NumberFormatException
     {
@@ -576,45 +576,67 @@ public final class Integer extends Number implements Comparable<Integer> {
                                             " greater than Character.MAX_RADIX");
         }
 
+        //最终输出值
         int result = 0;
+        //是否为负数
         boolean negative = false;
         int i = 0, len = s.length();
+        //临界值
         int limit = -Integer.MAX_VALUE;
+        //溢出阈值
         int multmin;
+        //需要追加的数值
         int digit;
 
         if (len > 0) {
             char firstChar = s.charAt(0);
+            //先判断转换的字符串是否有正负符号
             if (firstChar < '0') { // Possible leading "+" or "-"
+                //开头的字母是特殊字符,如果不是正负操作符就直接抛出转换异常
                 if (firstChar == '-') {
                     negative = true;
+                    //负数需要改变临界值
                     limit = Integer.MIN_VALUE;
                 } else if (firstChar != '+')
                     throw NumberFormatException.forInputString(s);
 
+                //只有一个操作符也是不可以的
                 if (len == 1) // Cannot have lone "+" or "-"
                     throw NumberFormatException.forInputString(s);
+                //有操作符的情况取位应该从第二位开始
                 i++;
             }
+            //limit负数为int最小值,正数为-int最大值,与进制基数相除计算临界值
             multmin = limit / radix;
             while (i < len) {
                 // Accumulating negatively avoids surprises near MAX_VALUE
+                // 通过char类型对应的ASCII码以及进制找到对应的进制int值
+                /// https://tool.ip138.com/ascii_code/ ASCII对照表
                 digit = Character.digit(s.charAt(i++),radix);
+                //如果没有匹配到抛出异常
                 if (digit < 0) {
                     throw NumberFormatException.forInputString(s);
                 }
+                //如果追加超过了溢出阈值抛出异常
                 if (result < multmin) {
                     throw NumberFormatException.forInputString(s);
                 }
+                //第一次循环,result为0,这里计算还是为0
+                //第二次循环,result赋值为字符串的第 i 位与进制基数相乘
+                //.........
                 result *= radix;
+                //result小于溢出阈值与追加值的和抛出转换异常
                 if (result < limit + digit) {
                     throw NumberFormatException.forInputString(s);
                 }
+                //result等于result减去追加值
                 result -= digit;
             }
         } else {
+            //空字符返回类型转换异常
             throw NumberFormatException.forInputString(s);
         }
+        //符号为正负.result添加对应符号
         return negative ? result : -result;
     }
 
@@ -635,7 +657,7 @@ public final class Integer extends Number implements Comparable<Integer> {
      * @exception  NumberFormatException  if the string does not contain a
      *               parsable integer.
      */
-    //默认转换为int类型,转换为10进制
+    //默认转换为int类型,转换基数为10(进制)
     public static int parseInt(String s) throws NumberFormatException {
         return parseInt(s,10);
     }
@@ -683,8 +705,10 @@ public final class Integer extends Number implements Comparable<Integer> {
      *             does not contain a parsable {@code int}.
      * @since 1.8
      */
+    //String转换为无符号int值
     public static int parseUnsignedInt(String s, int radix)
                 throws NumberFormatException {
+        //为空字符串返回数值转换异常
         if (s == null)  {
             throw new NumberFormatException("null");
         }
@@ -692,19 +716,25 @@ public final class Integer extends Number implements Comparable<Integer> {
         int len = s.length();
         if (len > 0) {
             char firstChar = s.charAt(0);
+            //无符号转换不支持负数
             if (firstChar == '-') {
                 throw new
                     NumberFormatException(String.format("Illegal leading minus sign " +
                                                        "on unsigned string %s.", s));
             } else {
+                //如果没有超过int最大值,就直接调用parseInt直接转换成int值
                 if (len <= 5 || // Integer.MAX_VALUE in Character.MAX_RADIX is 6 digits
                     (radix == 10 && len <= 9) ) { // Integer.MAX_VALUE in base 10 is 10 digits
                     return parseInt(s, radix);
                 } else {
+                    //如果超过int最大值,需要进行无符号转换,
+                    //因为超过了int的最大值,需要升级为long类型.
                     long ell = Long.parseLong(s, radix);
+                    //与运算是当前位同1为1.没有超过0xffffffff00000000的部分都为0.直接进行int强制转换
                     if ((ell & 0xffff_ffff_0000_0000L) == 0) {
                         return (int) ell;
                     } else {
+                        //界限为0xffffffff00000000:int最大值+int最小值的绝对值,超出表示不可以被转换
                         throw new
                             NumberFormatException(String.format("String value %s exceeds " +
                                                                 "range of unsigned int.", s));
@@ -732,6 +762,7 @@ public final class Integer extends Number implements Comparable<Integer> {
      *            parsable unsigned integer.
      * @since 1.8
      */
+    //转换为无符号int值,默认基数10
     public static int parseUnsignedInt(String s) throws NumberFormatException {
         return parseUnsignedInt(s, 10);
     }
@@ -1324,6 +1355,7 @@ public final class Integer extends Number implements Comparable<Integer> {
      *         conversion
      * @since 1.8
      */
+    //返回x的无符号long值
     public static long toUnsignedLong(int x) {
         return ((long) x) & 0xffffffffL;
     }
@@ -1346,6 +1378,7 @@ public final class Integer extends Number implements Comparable<Integer> {
      * @see #remainderUnsigned
      * @since 1.8
      */
+    //将xy两个整数转换为无符号整数后计算他们相除的商
     public static int divideUnsigned(int dividend, int divisor) {
         // In lieu of tricky code, for now just use long arithmetic.
         return (int)(toUnsignedLong(dividend) / toUnsignedLong(divisor));
@@ -1363,6 +1396,7 @@ public final class Integer extends Number implements Comparable<Integer> {
      * @see #divideUnsigned
      * @since 1.8
      */
+    //将xy两个整数转换为无符号整数后计算他们相除的余数
     public static int remainderUnsigned(int dividend, int divisor) {
         // In lieu of tricky code, for now just use long arithmetic.
         return (int)(toUnsignedLong(dividend) % toUnsignedLong(divisor));

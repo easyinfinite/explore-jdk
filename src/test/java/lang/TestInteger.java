@@ -40,6 +40,9 @@ public class TestInteger {
         log.info("compare ->{}",Integer.compare(1,-1));
         //转为二进制字符串
         log.info("toBinaryString ->{}",Integer.toBinaryString(111));
+        String binary="0x7fffffff";
+        log.info("parseUnsignedInt binary->{}",Integer.parseUnsignedInt(binary,16));
+        log.info("parseInt binary->{}",Integer.parseInt(binary,16));
     }
 
     //方便取出int型数字对应字符串的长度
