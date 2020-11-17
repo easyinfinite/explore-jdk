@@ -1379,6 +1379,7 @@ public final class String
      *          this.substring(toffset).startsWith(prefix)
      *          </pre>
      */
+    //检测源字符串从toffset下标往后是否与指定字符prefix相等
     public boolean startsWith(String prefix, int toffset) {
         char ta[] = value;
         int to = toffset;
@@ -1386,10 +1387,13 @@ public final class String
         int po = 0;
         int pc = prefix.value.length;
         // Note: toffset might be near -1>>>1.
+        // 指定下标toffset小于0或者大于源字符串减去prefix的长度
         if ((toffset < 0) || (toffset > value.length - pc)) {
             return false;
         }
+        //循环体次数为prefix的长度,比较toffset起点往后是否都相等.
         while (--pc >= 0) {
+            //发现不相等返回false
             if (ta[to++] != pa[po++]) {
                 return false;
             }
@@ -1410,6 +1414,7 @@ public final class String
      * {@link #equals(Object)} method.
      * @since 1. 0
      */
+    //用于检测字符串是否以指定的前缀prefix开始。
     public boolean startsWith(String prefix) {
         return startsWith(prefix, 0);
     }
@@ -1425,7 +1430,9 @@ public final class String
      * empty string or is equal to this {@code String} object
      * as determined by the {@link #equals(Object)} method.
      */
+    //检测源字符串是否以字符串suffix结尾
     public boolean endsWith(String suffix) {
+        //调用startsWith 传入起始点为源字符串长度减去字符串suffix长度
         return startsWith(suffix, value.length - suffix.value.length);
     }
 
@@ -1442,16 +1449,25 @@ public final class String
      *
      * @return a hash code value for this object.
      */
+    //返回源字符串的hash值(调用后成员变量hash赋值为结果值)
     public int hashCode() {
         int h = hash;
+        //hash值为0 且 源字符串长度大于0
         if (h == 0 && value.length > 0) {
             char val[] = value;
-
+            //循环执行计算公式val[i]为每一个下标的字符ASCII值
+            //通项公式为 s[0]*31^(n-1) + s[1]*31^(n-2) + ... + s[n-1]
+            //hash值并不能作为判断相等的唯一标准,因为回文数和hash冲突的情况会导致hash值一样
+            //关于为何会选用这个公式计算参考下面的两篇文章
+            //https://stackoverflow.com/questions/299304/why-does-javas-hashcode-in-string-use-31-as-a-multiplier
+            //https://segmentfault.com/a/1190000010799123
             for (int i = 0; i < value.length; i++) {
                 h = 31 * h + val[i];
             }
+            //最后赋值给成员变量hash
             hash = h;
         }
+        //如果之前有计算过hash值,hash不等于0直接返回
         return h;
     }
 
