@@ -2091,27 +2091,38 @@ public final class String
      * @return a string derived from this string by replacing every
      * occurrence of {@code oldChar} with {@code newChar}.
      */
+    //用newChar 替换 源字符串中出现的oldChar字符,产生新的String对象,对源字符串并没有改变
+    //因为没有正则匹配,在确定字符的情况下,效果一样,性能要优于replaceAll
     public String replace(char oldChar, char newChar) {
         if (oldChar != newChar) {
             int len = value.length;
             int i = -1;
             char[] val = value; /* avoid getfield opcode */
 
+            //找到第一个oldChar出现的下标,减少下面循环的循环次数
             while (++i < len) {
                 if (val[i] == oldChar) {
                     break;
                 }
             }
+            //起点i如果小于源字符串长度
             if (i < len) {
+                //定义一个新的字符数组
                 char buf[] = new char[len];
+                //先把出现oldChar之前的字符赋值给新的字符数组buf[]
                 for (int j = 0; j < i; j++) {
                     buf[j] = val[j];
                 }
+                //接着处理包含i下标以及之后的字符出现oldChar的情况
                 while (i < len) {
                     char c = val[i];
+                    // 第一次循环替换掉第一次出现oldChar的下标i字符,赋值newChar给buf的对应i下标
+                    // 后面的循环就依次判断是否是oldChar,是就赋值新值,不是赋值原值
+                    // .....
                     buf[i] = (c == oldChar) ? newChar : c;
                     i++;
                 }
+                //最后直接把字符数组直接赋值给 value 成员变量
                 return new String(buf, true);
             }
         }
@@ -2139,6 +2150,7 @@ public final class String
      * @see java.util.regex.Pattern
      * @since 1.4
      */
+    //是否完全匹配正则,返回布尔类型
     public boolean matches(String regex) {
         return Pattern.matches(regex, this);
     }
@@ -2191,6 +2203,7 @@ public final class String
      * @see java.util.regex.Pattern
      * @since 1.4
      */
+    //匹配regex,用replacement替换掉符合规则的首次出现字符(regex可以为已确认的字符串也可以是正则表达式),产生新的String对象,对源字符串并没有改变
     public String replaceFirst(String regex, String replacement) {
         return Pattern.compile(regex).matcher(this).replaceFirst(replacement);
     }
@@ -2229,8 +2242,16 @@ public final class String
      * @see java.util.regex.Pattern
      * @since 1.4
      */
+    //匹配regex,用replacement替换掉符合规则的字符(regex可以为已确认的字符串也可以是正则表达式),产生新的String对象,对源字符串并没有改变
+    //正则可参考 https://baike.baidu.com/item/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/1700215?fr=aladdin
     public String replaceAll(String regex, String replacement) {
-        return Pattern.compile(regex).matcher(this).replaceAll(replacement);
+        return Pattern
+                //按照此规则匹配
+                .compile(regex)
+                //源字符串为当前字符
+                .matcher(this)
+                //调用代替方法
+                .replaceAll(replacement);
     }
 
     /**
@@ -2245,7 +2266,9 @@ public final class String
      * @return The resulting string
      * @since 1.5
      */
+    //比replace(char oldChar, char newChar) 传参更灵活,可传继承CharSequence接口的StringBuilder以及StringBuffer对象
     public String replace(CharSequence target, CharSequence replacement) {
+        //Pattern.LITERAL 匹配文本
         return Pattern.compile(target.toString(), Pattern.LITERAL).matcher(
                 this).replaceAll(Matcher.quoteReplacement(replacement.toString()));
     }
@@ -2856,17 +2879,23 @@ public final class String
      * space removed, or this string if it has no leading or
      * trailing white space.
      */
+    //返回源字符串去掉空格,换行,回车,tab换行后的String字符串
     public String trim() {
         int len = value.length;
         int st = 0;
         char[] val = value;    /* avoid getfield opcode */
-
+        // ASCII码 9为tab空格,10为换行,13为回车,32为空格符
+        // 从头部开始去除空格,换行,回车,空格符
+        // 只有当为以上四种情况才会移动头部的指针
         while ((st < len) && (val[st] <= ' ')) {
             st++;
         }
+        // 从尾部开始去除空格,换行,回车,空格符
+        // 只有当为以上四种情况才会移动尾部的指针
         while ((st < len) && (val[len - 1] <= ' ')) {
             len--;
         }
+        // 如果此时头指针大于0或者尾指针小于字符数组长度说明有特殊字符去除过,需要截取st-len区间,否则直接返回当前字符串对象
         return ((st > 0) || (len < value.length)) ? substring(st, len) : this;
     }
 
@@ -2966,7 +2995,9 @@ public final class String
      * {@code obj.toString()} is returned.
      * @see java.lang.Object#toString()
      */
+    //传入object,返回String字符串
     public static String valueOf(Object obj) {
+        //为空对象时返回"null"字符串
         return (obj == null) ? "null" : obj.toString();
     }
 
@@ -2980,6 +3011,7 @@ public final class String
      * @return a {@code String} that contains the characters of the
      * character array.
      */
+    //传入字符数组,返回String字符串
     public static String valueOf(char data[]) {
         return new String(data);
     }
@@ -3004,6 +3036,7 @@ public final class String
      *                                   {@code offset+count} is larger than
      *                                   {@code data.length}.
      */
+    //传入字符数组以及偏移值和截取长度,返回String字符串
     public static String valueOf(char data[], int offset, int count) {
         return new String(data, offset, count);
     }
@@ -3021,6 +3054,7 @@ public final class String
      *                                   {@code offset+count} is larger than
      *                                   {@code data.length}.
      */
+    //同valueOf(char data[], int offset, int count)
     public static String copyValueOf(char data[], int offset, int count) {
         return new String(data, offset, count);
     }
@@ -3032,6 +3066,9 @@ public final class String
      * @return a {@code String} that contains the characters of the
      * character array.
      */
+    //早期的String构造器的实现,不会拷贝数组的,直接将参数的char[]数组作为String的value属性。然后test[0] = 'A',这样将导致字符串的变化
+    //为了避免这个问题，提供了copyValueOf方法，每次都拷贝成新的字符数组来构造新的String对象。但是现在的String对象，在构造器中就通过拷贝新数组实现了.
+    //所以现在此方法和valueOf(char data[])没有区别了
     public static String copyValueOf(char data[]) {
         return new String(data);
     }
@@ -3044,6 +3081,7 @@ public final class String
      * {@code "true"} is returned; otherwise, a string equal to
      * {@code "false"} is returned.
      */
+    //传入boolean类型,返回true或者false字符串
     public static String valueOf(boolean b) {
         return b ? "true" : "false";
     }
@@ -3056,8 +3094,11 @@ public final class String
      * @return a string of length {@code 1} containing
      * as its single character the argument {@code c}.
      */
+    //传入字符类型,返回Sting字符串
     public static String valueOf(char c) {
+        //先把char字符转为char数组
         char data[] = {c};
+        //调用直接赋值的构造方法把data字符数组直接赋值value成员变量
         return new String(data, true);
     }
 
@@ -3071,6 +3112,7 @@ public final class String
      * @return a string representation of the {@code int} argument.
      * @see java.lang.Integer#toString(int, int)
      */
+    //传入基本类型int,返回String字符串
     public static String valueOf(int i) {
         return Integer.toString(i);
     }
@@ -3085,6 +3127,7 @@ public final class String
      * @return a string representation of the {@code long} argument.
      * @see java.lang.Long#toString(long)
      */
+    //传入基本类型long,返回String字符串
     public static String valueOf(long l) {
         return Long.toString(l);
     }
@@ -3099,6 +3142,7 @@ public final class String
      * @return a string representation of the {@code float} argument.
      * @see java.lang.Float#toString(float)
      */
+    //传入基本类型float,返回String字符串
     public static String valueOf(float f) {
         return Float.toString(f);
     }
@@ -3113,6 +3157,7 @@ public final class String
      * @return a  string representation of the {@code double} argument.
      * @see java.lang.Double#toString(double)
      */
+    //传入基本类型double,返回String字符串
     public static String valueOf(double d) {
         return Double.toString(d);
     }
@@ -3140,5 +3185,10 @@ public final class String
      * @return a string that has the same contents as this string, but is
      * guaranteed to be from a pool of unique strings.
      */
+    //返回字符串对象的规范化表示形式
+    //String的intern()方法就是扩充常量池的一个方法.
+    //当一个String实例str调用intern()方法时，Java查找常量池中是否有相同Unicode的字符串常量，
+    //有则返回其的引用
+    //没有则在常量池中增加一个Unicode等于str的字符串并返回它的引用
     public native String intern();
 }

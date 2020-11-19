@@ -43,14 +43,14 @@ public class TestString {
         StringBuilder stringBuilder = new StringBuilder("12");
         stringBuilder.append("335");
         log.info("string contains->{}", str3.contains(stringBuilder));
-        StringBuffer buff= new StringBuffer("12");
+        StringBuffer buff = new StringBuffer("12");
         buff.append("335");
         log.info("string equals->{}", str3.equals(str4));
-        CharSequence cs="12345";
+        CharSequence cs = "12345";
         log.info("string equals->{}", str3.contentEquals(cs));
-        String str5="1111";
-        String str6=new String("1111");
-        char aa=22943;
+        String str5 = "1111";
+        String str6 = new String("1111");
+        char aa = 22943;
         System.out.println(aa);
         log.info("string equalsIgnoreCase->{}", str5.equalsIgnoreCase(str6));
         //测试反序列化参数ObjectStreamField
@@ -61,7 +61,24 @@ public class TestString {
         //测试用int数组构造String(取每一位int值对应的ASCII码输出 参照ASCII码对照表)
         int[] b = {47, 48, 49, 50};
         log.info("new string int[]->{}", new String(b, 0, 4));
-
+        String testHash = "1234";
+        log.info("testHash hash[]->{}", testHash.hashCode());
+        String testHash1 = new String("4321");
+        log.info("testHash hash[]->{}", testHash.hashCode());
+        String intern1="12345";
+        String intern2=new String("12345");
+        String intern3=new String("12345");
+        log.info("testintern intern2[]->{}", intern1==intern2.intern());
+        log.info("testintern intern2[]->{}", intern2.intern()==intern3.intern());
+        String trimString="    baidu baiduuuuuuuu baidubaiduuuuuuuu";
+        String trimStringReplaceAll="    baidu baiduuuuuuuu baidubaiduuuuuuuu";
+        log.info("test trim trimString[]->{}", trimString.trim());
+        log.info("test replace trimString[]->{} , oldString->{}", trimString.replace("wwww",""),trimString);
+        StringBuilder builder=new StringBuilder();
+        builder.append("baidu");
+        StringBuilder builder1=new StringBuilder();
+        builder1.append("baiduuuuuuuu");
+        log.info("test replace trimString[]->{},oldString->{}", trimStringReplaceAll.replace(builder,builder1),trimStringReplaceAll);
     }
 
     /**
