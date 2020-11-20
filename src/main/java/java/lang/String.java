@@ -749,6 +749,7 @@ public final class String
      * Copy characters from this string into dst starting at dstBegin.
      * This method doesn't perform any range checking.
      */
+    //拷贝整个源字符串追加到目标字符数组dst,dstBegin为追加起始下标
     void getChars(char dst[], int dstBegin) {
         System.arraycopy(value, 0, dst, dstBegin, value.length);
     }
@@ -783,7 +784,9 @@ public final class String
      *                                   <li>{@code dstBegin+(srcEnd-srcBegin)} is larger than
      *                                       {@code dst.length}</ul>
      */
+    //拷贝截取值为srcBegin-srcEnd的源字符串追加到目标字符数组dst,dstBegin为追加起始下标
     public void getChars(int srcBegin, int srcEnd, char dst[], int dstBegin) {
+        //边界检测
         if (srcBegin < 0) {
             throw new StringIndexOutOfBoundsException(srcBegin);
         }
@@ -867,6 +870,7 @@ public final class String
      * @throws UnsupportedEncodingException If the named charset is not supported
      * @since JDK1.1
      */
+    //返回源字符串的byte序列,编码为传入的编码名称
     public byte[] getBytes(String charsetName)
             throws UnsupportedEncodingException {
         if (charsetName == null) throw new NullPointerException();
@@ -888,6 +892,7 @@ public final class String
      * @return The resultant byte array
      * @since 1.6
      */
+    //返回源字符串的byte序列,编码为传入的Charset编码对象
     public byte[] getBytes(Charset charset) {
         if (charset == null) throw new NullPointerException();
         return StringCoding.encode(charset, value, 0, value.length);
@@ -905,6 +910,7 @@ public final class String
      * @return The resultant byte array
      * @since JDK1.1
      */
+    //返回源字符串的byte序列,编码为系统默认
     public byte[] getBytes() {
         return StringCoding.encode(value, 0, value.length);
     }
@@ -1495,6 +1501,7 @@ public final class String
      * character sequence represented by this object, or
      * {@code -1} if the character does not occur.
      */
+    //返回指定字符在源字符串中第一次出现处的索引,如果此字符串中没有这样的字符，则返回 -1
     public int indexOf(int ch) {
         return indexOf(ch, 0);
     }
@@ -1538,26 +1545,33 @@ public final class String
      * than or equal to {@code fromIndex}, or {@code -1}
      * if the character does not occur.
      */
+    //返回从 fromIndex 位置开始查找指定字符在字符串中第一次出现处的索引，如果此字符串中没有这样的字符，则返回 -1。
     public int indexOf(int ch, int fromIndex) {
         final int max = value.length;
+        //检查 fromIndex 是否符合规则
         if (fromIndex < 0) {
             fromIndex = 0;
         } else if (fromIndex >= max) {
+            //大于源字符串长度,返回-1
             // Note: fromIndex might be near -1>>>1.
             return -1;
         }
 
+        //检查是否BMP收录字符
         if (ch < Character.MIN_SUPPLEMENTARY_CODE_POINT) {
             // handle most cases here (ch is a BMP code point or a
             // negative value (invalid code point))
             final char[] value = this.value;
+            //从fromIndex下标开始对比函数,找到相同字符返回其下标
             for (int i = fromIndex; i < max; i++) {
                 if (value[i] == ch) {
                     return i;
                 }
             }
+            //没找到返回-1
             return -1;
         } else {
+            //如果不是收录字符,查找补充字符集
             return indexOfSupplementary(ch, fromIndex);
         }
     }
@@ -1565,13 +1579,17 @@ public final class String
     /**
      * Handles (rare) calls of indexOf with a supplementary character.
      */
+    //补充字符查找第一次出现位置
     private int indexOfSupplementary(int ch, int fromIndex) {
         if (Character.isValidCodePoint(ch)) {
             final char[] value = this.value;
+            //获取高位代理
             final char hi = Character.highSurrogate(ch);
+            //获取低位代理
             final char lo = Character.lowSurrogate(ch);
             final int max = value.length - 1;
             for (int i = fromIndex; i < max; i++) {
+
                 if (value[i] == hi && value[i + 1] == lo) {
                     return i;
                 }
@@ -1603,6 +1621,7 @@ public final class String
      * character sequence represented by this object, or
      * {@code -1} if the character does not occur.
      */
+    //返回指定字符在此字符串中最后一次出现处的索引，如果此字符串中没有这样的字符，则返回 -1
     public int lastIndexOf(int ch) {
         return lastIndexOf(ch, value.length - 1);
     }
@@ -1641,6 +1660,7 @@ public final class String
      * than or equal to {@code fromIndex}, or {@code -1}
      * if the character does not occur before that point.
      */
+    //返回指定字符在此字符串中最后一次出现处的索引，从指定的索引处开始进行反向搜索，如果此字符串中没有这样的字符，则返回 -1。
     public int lastIndexOf(int ch, int fromIndex) {
         if (ch < Character.MIN_SUPPLEMENTARY_CODE_POINT) {
             // handle most cases here (ch is a BMP code point or a
@@ -1690,7 +1710,7 @@ public final class String
      * @return the index of the first occurrence of the specified substring,
      * or {@code -1} if there is no such occurrence.
      */
-    //字符串str在当前字符串中第一次出现的位置
+    //字符串str在源字符串中第一次出现的位置
     public int indexOf(String str) {
         return indexOf(str, 0);
     }
@@ -1711,7 +1731,7 @@ public final class String
      * starting at the specified index,
      * or {@code -1} if there is no such occurrence.
      */
-    //字符串str在当前字符串中的第一次出现的位置(查找起始位置为fromIndex)
+    //字符串str在源字符串中的第一次出现的位置(查找起始位置为fromIndex)
     public int indexOf(String str, int fromIndex) {
         //取全部当前字符串和查找的字符串的全部,起始值为fromIndex
         return indexOf(value, 0, value.length,
@@ -1779,7 +1799,7 @@ public final class String
             //快速定位要查找的字符串第一个字符在源字符串中的位置.
             if (source[i] != first) {
                 //如果此时i小于循环最大值且还未在源字符串中找到目标字符串的第一个字符
-                //i每次进入循环是会加1的,知道不满足上面的条件,退出while循环.这样可以减少最外层for循环的次数
+                //i每次进入循环是会加1的,直到不满足上面的条件,退出while循环.这样可以减少最外层for循环的次数
                 while (++i <= max && source[i] != first) ;
             }
 
@@ -1828,6 +1848,7 @@ public final class String
      * @return the index of the last occurrence of the specified substring,
      * or {@code -1} if there is no such occurrence.
      */
+    //返回指定子字符串在此字符串中最右边出现处的索引，如果此字符串中没有这样的字符，则返回-1
     public int lastIndexOf(String str) {
         return lastIndexOf(str, value.length);
     }
@@ -1848,6 +1869,7 @@ public final class String
      * searching backward from the specified index,
      * or {@code -1} if there is no such occurrence.
      */
+    //返回指定子字符串在此字符串中最后一次出现处的索引，从指定的索引开始反向搜索，如果此字符串中没有这样的字符，则返回-1
     public int lastIndexOf(String str, int fromIndex) {
         return lastIndexOf(value, 0, value.length,
                 str.value, 0, str.value.length, fromIndex);
@@ -1876,13 +1898,13 @@ public final class String
      * source is the character array being searched, and the target
      * is the string being searched for.
      *
-     * @param source       the characters being searched.
-     * @param sourceOffset offset of the source string.
-     * @param sourceCount  count of the source string.
-     * @param target       the characters being searched for.
-     * @param targetOffset offset of the target string.
-     * @param targetCount  count of the target string.
-     * @param fromIndex    the index to begin searching from.
+     * @param source       the characters being searched. 源字符串
+     * @param sourceOffset offset of the source string. 源字符串偏移值
+     * @param sourceCount  count of the source string. 源字符截取值
+     * @param target       the characters being searched for. 目标字符串
+     * @param targetOffset offset of the target string. 目标字符串偏移值
+     * @param targetCount  count of the target string. 目标字符串截取值
+     * @param fromIndex    the index to begin searching from. 从源字符的第几位开始查找
      */
     static int lastIndexOf(char[] source, int sourceOffset, int sourceCount,
                            char[] target, int targetOffset, int targetCount,
@@ -1891,10 +1913,12 @@ public final class String
          * Check arguments; return immediately where possible. For
          * consistency, don't check for null str.
          */
+        //源字符串与目标字符串的截取值差值
         int rightIndex = sourceCount - targetCount;
         if (fromIndex < 0) {
             return -1;
         }
+        //此差值必须小于等于开始查找的下标,如果大于差值把差值为开始查找的下标
         if (fromIndex > rightIndex) {
             fromIndex = rightIndex;
         }
@@ -1903,6 +1927,7 @@ public final class String
             return fromIndex;
         }
 
+        //找出第一个需要查找相等的字符,此操作为倒序
         int strLastIndex = targetOffset + targetCount - 1;
         char strLastChar = target[strLastIndex];
         int min = sourceOffset + targetCount - 1;
