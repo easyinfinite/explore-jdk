@@ -28,13 +28,7 @@ package java.lang;
 import java.io.ObjectStreamField;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Formatter;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.StringJoiner;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -1681,6 +1675,7 @@ public final class String
     /**
      * Handles (rare) calls of lastIndexOf with a supplementary character.
      */
+    //补充字符最后出现位置
     private int lastIndexOfSupplementary(int ch, int fromIndex) {
         if (Character.isValidCodePoint(ch)) {
             final char[] value = this.value;
@@ -1761,13 +1756,13 @@ public final class String
      * source is the character array being searched, and the target
      * is the string being searched for.
      *
-     * @param source       the characters being searched.
-     * @param sourceOffset offset of the source string.
-     * @param sourceCount  count of the source string.
-     * @param target       the characters being searched for.
-     * @param targetOffset offset of the target string.
-     * @param targetCount  count of the target string.
-     * @param fromIndex    the index to begin searching from.
+     * @param source       the characters being searched. 源字符串
+     * @param sourceOffset offset of the source string. 源字符串偏移值
+     * @param sourceCount  count of the source string. 源字符截取值
+     * @param target       the characters being searched for. 目标字符串
+     * @param targetOffset offset of the target string. 目标字符串偏移值
+     * @param targetCount  count of the target string. 目标字符串截取值
+     * @param fromIndex    the index to begin searching from. 从源字符的第几位开始查找
      */
     //源字符串中目标字符串第一次出现的下标,未找到为-1
     static int indexOf(char[] source, int sourceOffset, int sourceCount,
@@ -1927,9 +1922,10 @@ public final class String
             return fromIndex;
         }
 
-        //找出第一个需要查找相等的字符,此操作为倒序
+        //找出目标字符串要匹配的最后一个字符
         int strLastIndex = targetOffset + targetCount - 1;
         char strLastChar = target[strLastIndex];
+        //目标字符串最后一个字符在源字符串中出现位置最小的下标
         int min = sourceOffset + targetCount - 1;
         int i = min + fromIndex;
 
@@ -2485,14 +2481,19 @@ public final class String
      * @see java.util.StringJoiner
      * @since 1.8
      */
+    //字符串用delimiter连接.elements可传字符类型数组或者多个字符逗号隔开的形式
     public static String join(CharSequence delimiter, CharSequence... elements) {
+        //连接符和要连接的字符都不可为空
         Objects.requireNonNull(delimiter);
         Objects.requireNonNull(elements);
         // Number of elements not likely worth Arrays.stream overhead.
+        //创建一个StringJoiner,连接符为delimiter
         StringJoiner joiner = new StringJoiner(delimiter);
+        //遍历需要连接的字符
         for (CharSequence cs : elements) {
             joiner.add(cs);
         }
+        //返回新的字符
         return joiner.toString();
     }
 
@@ -2530,8 +2531,10 @@ public final class String
      * @see java.util.StringJoiner
      * @since 1.8
      */
+    //字符串用delimiter连接.elements可传字符类型集合
     public static String join(CharSequence delimiter,
                               Iterable<? extends CharSequence> elements) {
+        //连接符和要连接的字符都不可为空
         Objects.requireNonNull(delimiter);
         Objects.requireNonNull(elements);
         StringJoiner joiner = new StringJoiner(delimiter);

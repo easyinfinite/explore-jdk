@@ -65,20 +65,28 @@ public class TestString {
         log.info("testHash hash[]->{}", testHash.hashCode());
         String testHash1 = new String("4321");
         log.info("testHash hash[]->{}", testHash.hashCode());
-        String intern1="12345";
-        String intern2=new String("12345");
-        String intern3=new String("12345");
-        log.info("testintern intern2[]->{}", intern1==intern2.intern());
-        log.info("testintern intern2[]->{}", intern2.intern()==intern3.intern());
-        String trimString="    baidu baiduuuuuuuu baidubaiduuuuuuuu";
-        String trimStringReplaceAll="    baidu baiduuuuuuuu baidubaiduuuuuuuu";
+        String intern1 = "12345";
+        String intern2 = new String("12345");
+        String intern3 = new String("12345");
+        log.info("testintern intern2[]->{}", intern1 == intern2.intern());
+        log.info("testintern intern2[]->{}", intern2.intern() == intern3.intern());
+        String trimString = "    baidu baiduuuuuuuu baidubaiduuuuuuuu";
+        String trimStringReplaceAll = "    baidu baiduuuuuuuu baidubaiduuuuuuuu";
         log.info("test trim trimString[]->{}", trimString.trim());
-        log.info("test replace trimString[]->{} , oldString->{}", trimString.replace("wwww",""),trimString);
-        StringBuilder builder=new StringBuilder();
+        log.info("test replace trimString[]->{} , oldString->{}", trimString.replace("wwww", ""), trimString);
+        StringBuilder builder = new StringBuilder();
         builder.append("baidu");
-        StringBuilder builder1=new StringBuilder();
+        StringBuilder builder1 = new StringBuilder();
         builder1.append("baiduuuuuuuu");
-        log.info("test replace trimString[]->{},oldString->{}", trimStringReplaceAll.replace(builder,builder1),trimStringReplaceAll);
+        log.info("test replace trimString[]->{},oldString->{}", trimStringReplaceAll.replace(builder, builder1), trimStringReplaceAll);
+        String searchStr = "wooowoooowooo";
+        String indexStr = "woo";
+        log.info("test indexOf searchStr[]->{},indexStr->{}", searchStr.indexOf(indexStr), indexStr);
+        log.info("test lastIndexOf searchStr[]->{},indexStr->{}", searchStr.lastIndexOf(indexStr, 4), indexStr);
+        String joinA="abc";
+        String joinB="def";
+        String[] joinAB={"abc","def"};
+        log.info("test join joinAB->{}", String.join("-", joinAB));
     }
 
     /**
